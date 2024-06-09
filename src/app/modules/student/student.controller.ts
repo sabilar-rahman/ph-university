@@ -3,17 +3,7 @@ import httpStatus from "http-status";
 
 import { StudentServices } from "./student.service";
 import sendResponse from "../utils/sendResponse";
-
-
-// Higher order Function
-
-//  Avoid Repetition Of Try-Catch , Use CatchAsync
-
-const catchAsync = (fn: RequestHandler) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch((err) => next(err));
-  };
-};
+import catchAsync from "../utils/catchAsync";
 
 const getSingleStudent = catchAsync(async (req, res, next) => {
   const { studentId } = req.params;
@@ -58,25 +48,17 @@ const getAllStudents: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-const deleteStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { studentId } = req.params;
-    const result = await StudentServices.deleteStudentFromDB(studentId);
+const deleteStudent: RequestHandler = catchAsync(async (req, res, next) => {
+  const { studentId } = req.params;
+  const result = await StudentServices.deleteStudentFromDB(studentId);
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Student is deleted succesfully",
-      data: result,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Student is deleted succesfully",
+    data: result,
+  });
+});
 
 export const StudentControllers = {
   getAllStudents,
