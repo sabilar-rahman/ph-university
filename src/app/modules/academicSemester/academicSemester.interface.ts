@@ -18,3 +18,9 @@ export type TAcademicSemester = {
 
     
 }
+
+  // semester code  = semester code
+
+export  type TAcademicSemesterNameCodeMapper = {
+    [key: string]: string;
+  };
