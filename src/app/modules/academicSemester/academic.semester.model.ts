@@ -21,7 +21,7 @@ const AcademicSemesterSchema = new Schema<TAcademicSemester>(
     },
     year: {
       type: String,
-     required: true,
+      required: true,
     },
     code: {
       type: String,
@@ -30,7 +30,7 @@ const AcademicSemesterSchema = new Schema<TAcademicSemester>(
     },
     startMonth: {
       type: String,
-     required: true,
+      required: true,
       enum: Months,
     },
     endMonth: {
@@ -43,6 +43,19 @@ const AcademicSemesterSchema = new Schema<TAcademicSemester>(
     timestamps: true,
   }
 );
+
+// pre hook middleware for preventing same semester to sava database
+
+AcademicSemesterSchema.pre("save", async function (next) {
+  const isSemesterExists = await academicSemester.findOne({
+    year: this.year,
+    name: this.name,
+  });
+  if (isSemesterExists) {
+    throw new Error("Semester is Already Exists");
+  }
+  next();
+});
 
 export const academicSemester = model<TAcademicSemester>(
   "AcademicSemester",
